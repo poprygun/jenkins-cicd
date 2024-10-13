@@ -26,20 +26,10 @@ pipeline {
                 sh './gradlew test'
             }
         }
-       stage('Create Dockerfile') {
+       stage('Pull Dockerfile from Github') {
             steps {
                 script {
-                    writeFile file: 'Dockerfile', text: '''
-                        FROM eclipse-temurin:17-jre-alpine
-
-                        WORKDIR /app
-
-                        COPY build/libs/*.jar app.jar
-
-                        EXPOSE 8080
-
-                        ENTRYPOINT ["java", "-jar", "/app/app.jar"]
-                    '''
+                  sh 'curl -o Dockerfile https://raw.githubusercontent.com/poprygun/jenkins-cicd/master/Dockerfile'
                 }
             }
         }

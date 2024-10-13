@@ -15,6 +15,7 @@
 ## Prerequisites
 
 [Install and configure local Jenkins on Mac](#install-and-configure-jenkins-on-mac-osx)
+
 [Run local Docker registry](#local-docker-registry)
 
 ## Configure pipeline
