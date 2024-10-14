@@ -53,6 +53,18 @@ Pipeline stages with status can be viewed upon successful run
 
 ## Pipeline artifacts
 
+A tarball of docker image was submitted as instructed to [jFrog Greenhouse Tests](https://app.greenhouse.io/tests/c4b2d72b920571715a60607f1db7eb0b?utm_medium=email&utm_source=TakeHomeTest)
+
+```bash
+docker save -o jfrog-test-spring-petclinic.tar localhost:5001/jfrog-test/spring-petclinic:latest
+```
+
+It can be restored as a docker image using following command
+
+```bash
+docker load -i jfrog-test-spring-petclinic.tar
+```
+
 Docker image is availabe in local docker registry and can be pulled
 
 ```bash
