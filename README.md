@@ -65,6 +65,16 @@ docker pull localhost:5001/jfrog-test/spring-petclinic:latest
 docker run -d -p 8082:8080 localhost:5001/jfrog-test/spring-petclinic:latest
 ```
 
+I also tagged and published the image to my Docker registry
+
+```bash
+docker tag localhost:5001/jfrog-test/spring-petclinic:latest ashumilov/spring-petclinic:latest
+
+docker push ashumilov/spring-petclinic:latest
+
+docker run -d -p 8082:8080 ashumilov/spring-petclinic:latest
+```
+
 ## [Install and configure Jenkins on Mac OSX](https://www.jenkins.io/doc/book/installing/macos/)
 
 Install Jenkins using Brew
