@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = 'localhost:5001'
         ARTIFACTORY_REPO = 'gradle-dev-local'
+        ARTIFACTORY_DOCKER_REGISTRY = 'docker-local'
         IMAGE_NAME = 'jfrog-test/spring-petclinic'
         IMAGE_TAG = 'latest'
         ARTIFACTORY_CREDENTIALS = credentials('artifactory-credentials-id')
@@ -57,10 +58,9 @@ pipeline {
             }
         }
 
-        stage('Package Application') {
+        stage('Package Application Docker Image') {
             steps {
                 script {
-                    // sh './gradlew build -x test'
                     sh 'docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }
@@ -69,8 +69,12 @@ pipeline {
         stage('Push Docker Image to Artifactory') {
             steps {
                 script {
-                    sh 'docker login -u ${ARTIFACTORY_CREDENTIALS_USR} -p ${ARTIFACTORY_CREDENTIALS_PSW} ${DOCKER_REGISTRY}'
+                    // todo switch to use jFrog CLI when Artifactory Edition that supports Docker Registry is available
+                    // for now just use mock registry started from docker compose
+                    
                     sh 'docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}'
+                    
+                    // jf 'docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} ${ARTIFACTORY_DOCKER_REGISTRY}'
                 }
             }
         }
