@@ -3,9 +3,14 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = 'localhost:5001'
+        ARTIFACTORY_REPO = 'gradle-dev-local'
         IMAGE_NAME = 'jfrog-test/spring-petclinic'
         IMAGE_TAG = 'latest'
         ARTIFACTORY_CREDENTIALS = credentials('artifactory-credentials-id')
+    }
+
+    tools {
+        jfrog 'jfrog-cli'
     }
 
     stages {
@@ -26,6 +31,24 @@ pipeline {
                 sh './gradlew test'
             }
         }
+
+        stage('Publish JARs to Artifactory using jFrog Plugin') {
+            steps {
+                script {
+// can use a better way to extract application group
+                    def group = 'org.springframework.samples'
+                    def version = '3.3.0'
+
+                    def jarFile = findFiles(glob: 'build/libs/*.jar')[1].path
+                    def repoPath = "${group.replace('.', '/')}/${version}/${jarFile.split('/')[-1]}"
+            
+                    echo "Group: ${group}, Version: ${version}, Path: ${repoPath}"
+
+                    jf "rt u $jarFile ${ARTIFACTORY_REPO}/$repoPath"
+                }
+            }
+        }
+
        stage('Pull Dockerfile from Github') {
             steps {
                 script {
@@ -33,10 +56,11 @@ pipeline {
                 }
             }
         }
+
         stage('Package Application') {
             steps {
                 script {
-                    sh './gradlew build -x test'
+                    // sh './gradlew build -x test'
                     sh 'docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} .'
                 }
             }

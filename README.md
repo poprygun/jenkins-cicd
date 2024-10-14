@@ -8,6 +8,8 @@
 
 - Run tests
 
+- Push applications jars to jFrog Artifactory using jFrog Jenkins Plugin
+
 - Build docker image using Dockerfile from this repository
 
 - Push image to the registry that emulates Artifactory Docker Registry
@@ -16,7 +18,23 @@
 
 [Install and configure local Jenkins on Mac](#install-and-configure-jenkins-on-mac-osx)
 
-[Run local Docker registry](#local-docker-registry)
+[Run local Docker registry](#docker-registry)
+
+[Run local jFrog Artifactory Oss](#artifactory)
+
+## Start all services
+
+### Start Jenkins
+
+```bash
+brew services start jenkins-lts
+```
+
+### Start Artifactory and Local Docker Registry
+
+```bash
+docker compose up -d
+```
 
 ## Configure pipeline
 
@@ -41,10 +59,10 @@ Docker image is availabe in local docker registry and can be pulled
 docker pull localhost:5001/jfrog-test/spring-petclinic:latest
 ```
 
-## Run the container
+## Run the application
 
 ```bash
-docker run -d -p 8081:8080 localhost:5001/jfrog-test/spring-petclinic:latest
+docker run -d -p 8082:8080 localhost:5001/jfrog-test/spring-petclinic:latest
 ```
 
 ## [Install and configure Jenkins on Mac OSX](https://www.jenkins.io/doc/book/installing/macos/)
@@ -68,12 +86,12 @@ Install plugins required by the pipeline
 
 - Github Plugin
 - Docker Plugins (multiple)
-- Artifactory Plugins
+- [jFrog Plugin](https://plugins.jenkins.io/jfrog/)
+- [jFrog CLI](http://localhost:8080/)
 - Gradle Plugin
+- Utility Steps Plugin
 
-
-
-[Setup Docker registry credentials](https://www.jenkins.io/doc/book/using/using-credentials/) with name `artifactory-credentials-id` providing user and password for the docker registry
+[Setup Artifactory credentials](https://www.jenkins.io/doc/book/using/using-credentials/) with name `artifactory-credentials-id` providing user and password for the Artifactory
 
 Modify `homebrew.mxcl.jenkins-lts.plist` file as follows to fix Jenkins/Docker Desktop integration
 ```
@@ -111,10 +129,10 @@ Modify `homebrew.mxcl.jenkins-lts.plist` file as follows to fix Jenkins/Docker D
 </plist>
 ```
 
-## Local Docker Registry
+## Docker Registry
 
 Artifactory OSS version does not seem to support Docker feature.  I decided to run local docker registry as a standalone componenent to emulate Artifactory feature.
 
-```bash
-docker run -d -p 5001:5000 --name registry registry:2
-```
+## Artifactory
+
+See `docker-compose.yml` for both registry and artifactory services configurations.
